@@ -41,7 +41,7 @@ const Product = () => {
       }
     };
 
-    fetchData('http://localhost:5000/get-product');
+    fetchData('https://ecom-2m5s.onrender.com/get-product');
   }, []);
   console.log("Producttts",products);
 
