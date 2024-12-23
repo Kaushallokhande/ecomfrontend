@@ -34,7 +34,7 @@ const ProductDetail = ({ productId, onClose }) => {
   useEffect(() => {
     console.log("productId", productId);
     axios
-      .post(`http://localhost:5000/cart/product-details`, { productId })
+      .post(`https://ecom-2m5s.onrender.com/cart/product-details`, { productId })
       .then((response) => {
         const productData = response.data;
         console.log(productData);

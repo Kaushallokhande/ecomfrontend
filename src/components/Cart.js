@@ -174,7 +174,7 @@ const Cart = () => {
         const productDetails = await Promise.all(
           shoppingCart.map((item) =>
             axios
-              .post("http://localhost:5000/cart/product-details", {
+              .post("https://ecom-2m5s.onrender.com/cart/product-details", {
                 productId: item._id,
               })
               .then((res) => res.data)

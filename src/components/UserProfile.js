@@ -2,7 +2,7 @@ import { Fragment, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "../CSS/UserProfile.css";
 import Logo from "/Logo.png";
-import Error from "../Components/Error";
+import Error from "./Error";
 import toast from "react-hot-toast";
 
 const UserProfile = () => {

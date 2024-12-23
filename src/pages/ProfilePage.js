@@ -20,7 +20,7 @@ const ProfilePage = () => {
   const userId = userdata.userId;
   useEffect(() => {
     axios
-      .get(`http://localhost:5000/auth/user/${userId}`)
+      .get(`https://ecom-2m5s.onrender.com/auth/user/${userId}`)
       .then((response) => {
         setUserProfile(response.data);
         alert("logged out");
@@ -32,7 +32,7 @@ const ProfilePage = () => {
       });
   }, []);
   const handleLogout=()=>{
-    axios.post('http://localhost:5000/auth/logout')
+    axios.post('https://ecom-2m5s.onrender.com/auth/logout')
     .then((response) => {
         localStorage.removeItem('userData');
         console.log(response.data);

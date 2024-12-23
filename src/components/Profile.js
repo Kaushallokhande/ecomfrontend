@@ -7,8 +7,8 @@ import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff"
 
 // components
-import toast from 'react-hot-toast';
-import Error from "../Components/Error";
+import toast from 'react-hot-toast'
+import Error from './Error'
 import UserProfile from "./UserProfile";
 import { useCart } from "../Components/CartContext";
 import ".././CSS/Profile.css";
@@ -58,7 +58,7 @@ const Profile = () => {
     } else {
       try {
         const response = await fetch(
-          "https://ecommerce-backend-0wr7.onrender.com/ecommerce/user/login",
+          "https://ecom-2m5s.onrender.com/ecommerce/user/login",
           {
             method: "POST",
             headers: {
@@ -113,7 +113,7 @@ const Profile = () => {
     } else {
       try {
         const response = await fetch(
-          "https://ecommerce-backend-0wr7.onrender.com/ecommerce/user/signup",
+          "https://ecom-2m5s.onrender.com/ecommerce/user/signup",
           {
             method: "POST",
             headers: {
