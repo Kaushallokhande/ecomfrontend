@@ -1,26 +1,23 @@
-
 import { Fragment, useEffect, useState } from "react";
 import axios from "axios";
 import Loader from "../components/Loader";
 import ProductDetail from "../components/ProductDetails";
-
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 
 const Product = () => {
   const [loading, setLoading] = useState(true);
-  const [products, setProducts] = useState([{}]);
+  const [products, setProducts] = useState([]);
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [searchText, setSearchText] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
 
   useEffect(() => {
-    const fetchData = async (url) => {
+    const fetchData = async () => {
       try {
-        const response = await fetch(url, {
-          method: 'GET',
+        const response = await fetch("https://ecom-2m5s.onrender.com/get-product", {
+          method: "GET",
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer YOUR_TOKEN', // Optional
+            "Content-Type": "application/json",
           },
         });
 
@@ -29,21 +26,18 @@ const Product = () => {
         }
 
         const result = await response.json();
-        console.log("result",result);
-
-        // Ensure result is an array and set loading to false
-        setProducts(result.products);
+        console.log(result);
+        setProducts(result.products || []); // Ensure products is an array
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching data:', error);
-        setLoading(false); // Stop loading if there's an error
-     // Fallback to an empty array
+        console.error("Error fetching data:", error.message);
+        setProducts([]); // Fallback to an empty array
+        setLoading(false);
       }
     };
 
-    fetchData('https://ecom-2m5s.onrender.com/get-product');
+    fetchData();
   }, []);
-  console.log("Producttts",products);
 
   const openProductDetail = (productId) => {
     toast("Nice Choice! Just Take It For You!", {
@@ -54,7 +48,6 @@ const Product = () => {
         color: "rgb(255, 210, 255)",
       },
     });
-    console.log("prodcutId",productId);
     setSelectedProductId(productId);
   };
 
@@ -65,26 +58,27 @@ const Product = () => {
   const filterProducts = () => {
     if (!Array.isArray(products)) return [];
     return products.filter((product) => {
+      const name = product.name || "";
+      const category = product.category || "";
+      const price = product.price || "";
+
       return (
-        (product.name.toLowerCase().includes(searchText.toLowerCase()) ||
-          product.category.toLowerCase().includes(searchText.toLowerCase()) ||
-          product.price.toString().includes(searchText)) &&
-        (selectedCategory === "" ||
-          product.category.toLowerCase() === selectedCategory.toLowerCase())
+        (name.toLowerCase().includes(searchText.toLowerCase()) ||
+          category.toLowerCase().includes(searchText.toLowerCase()) ||
+          price.toString().includes(searchText)) &&
+        (selectedCategory === "" || category.toLowerCase() === selectedCategory.toLowerCase())
       );
     });
   };
 
-  // Ensure products is an array before calling .map()
   const uniqueCategories = [
-    ...new Set(Array.isArray(products) ? products.map((product) => product.category) : []),
+    ...new Set(Array.isArray(products) ? products.map((product) => product.category || "") : []),
   ];
 
   const handleCategory = (category) => {
     setSelectedCategory(category);
   };
 
-  // Sorting the products on the basis of views (fallback for undefined views)
   const sortMostViewed = () => {
     const sortedProducts = products.slice().sort((a, b) => (b.views || 0) - (a.views || 0));
     setProducts(sortedProducts);
@@ -107,7 +101,9 @@ const Product = () => {
             value={selectedCategory}
             className="w-full md:w-1/4 px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
           >
-            <option className="text-black" value="">All Categories</option>
+            <option className="text-black" value="">
+              All Categories
+            </option>
             {uniqueCategories.map((category) => (
               <option className="text-black" key={category} value={category}>
                 {category}
@@ -125,9 +121,11 @@ const Product = () => {
           <div className="flex items-center justify-center h-64">
             <Loader />
           </div>
+        ) : products.length === 0 ? (
+          <div className="text-center text-gray-600">No products found.</div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {filterProducts()?.map((product) => (
+            {filterProducts().map((product) => (
               <div
                 key={product._id}
                 className="bg-white border hover:cursor-pointer hover:scale-110 scroll-m-1 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
@@ -139,19 +137,13 @@ const Product = () => {
                   className="w-full h-48 object-cover"
                 />
                 <div className="p-4">
-                  <h2 className="text-lg font-semibold text-gray-800">
-                    {product.name}
-                  </h2>
+                  <h2 className="text-lg font-semibold text-gray-800">{product.name}</h2>
                   <p className="text-gray-600">Rs. {product.price}</p>
-                  <p
-                    className="text-green-500"
-                  >
-                    {`Number of Stocks available is ${product.inStockValue}`}
+                  <p className="text-green-500">
+                    {`Number of Stocks available: ${product.inStockValue || 0}`}
                   </p>
-                  <p
-                    className="text-red-600"
-                  >
-                    {`Number of Stocks sold stock is ${product.soldStockValue}`}
+                  <p className="text-red-600">
+                    {`Number of Stocks sold: ${product.soldStockValue || 0}`}
                   </p>
                 </div>
               </div>
@@ -162,10 +154,7 @@ const Product = () => {
       {selectedProductId && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-lg max-w-lg w-full shadow-lg transform transition-all duration-300 ease-in-out">
-            <ProductDetail
-              productId={selectedProductId}
-              onClose={closeProductDetail}
-            />
+            <ProductDetail productId={selectedProductId} onClose={closeProductDetail} />
             <div
               className="absolute text-black top-4 right-4 text-2xl font-bold cursor-pointer"
               onClick={closeProductDetail}
